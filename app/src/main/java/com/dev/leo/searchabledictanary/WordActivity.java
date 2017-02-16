@@ -16,9 +16,7 @@ import android.view.MenuItem;
 import android.widget.SearchView;
 import android.widget.TextView;
 
-/**
- * Displays a word and its definition.
- */
+
 public class WordActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {

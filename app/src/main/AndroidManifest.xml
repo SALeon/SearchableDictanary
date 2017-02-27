@@ -2,10 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.dev.leo.searchabledictanary">
 
-    <application android:label="@string/app_name"
+   
         android:icon="@drawable/ic_dictionary">
 
-        <!-- The default activity of the app; displays search results. -->
+      
         <activity android:name=".SearchableDictionary"
             android:launchMode="singleTop">
 
@@ -14,10 +14,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <!-- Receives the search request. -->
+     
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
-                <!-- No category needed, because the Intent will specify this class component-->
+                
             </intent-filter>
 
             <!-- Points to searchable meta data. -->
@@ -26,14 +26,14 @@
 
         </activity>
 
-        <!-- Displays the definition of a word. -->
+       
         <activity android:name=".WordActivity" />
 
-        <!-- Provides search suggestions for words and their definitions. -->
+        
         <provider android:name=".DictionaryProvider"
             android:authorities="com.example.android.searchabledict.DictionaryProvider" />
 
-        <!-- Points to searchable activity so the whole app can invoke search. -->
+      
         <meta-data android:name="android.app.default_searchable"
             android:value=".SearchableDictionary" />
 

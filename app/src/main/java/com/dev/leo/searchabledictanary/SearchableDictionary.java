@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,23 +26,27 @@ import android.widget.AdapterView.OnItemClickListener;
  * actions from search suggestions.
  */
 public class SearchableDictionary extends Activity {
-
+    String TAG = "SearchableDictionary";
     private TextView mTextView;
     private ListView mListView;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-
+        Log.d(TAG, "Loading onCreate");
         mTextView = (TextView) findViewById(R.id.text);
         mListView = (ListView) findViewById(R.id.list);
 
         handleIntent(getIntent());
+
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
+        Log.d(TAG, "Loading onNewIntent");
+
         // Because this activity has set launchMode="singleTop", the system calls this method
         // to deliver the intent if this activity is currently the foreground activity when
         // invoked again (when the user executes a search from this activity, we don't create
@@ -50,12 +55,18 @@ public class SearchableDictionary extends Activity {
     }
 
     private void handleIntent(Intent intent) {
+        Log.d(TAG, "Loading handleIntent");
+
         if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+            Log.d(TAG, "Loading handleIntent ACTION_VIEW");
+
             // handles a click on a search suggestion; launches activity to show word
             Intent wordIntent = new Intent(this, WordActivity.class);
             wordIntent.setData(intent.getData());
             startActivity(wordIntent);
         } else if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            Log.d(TAG, "Loading handleIntent ACTION_SEARCH");
+
             // handles a search query
             String query = intent.getStringExtra(SearchManager.QUERY);
             showResults(query);
@@ -67,6 +78,7 @@ public class SearchableDictionary extends Activity {
      * @param query The search query
      */
     private void showResults(String query) {
+        Log.d(TAG, "Loading showResults");
 
         Cursor cursor = managedQuery(DictionaryProvider.CONTENT_URI, null, null,
                 new String[] {query}, null);
@@ -112,6 +124,8 @@ public class SearchableDictionary extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d(TAG, "Loading onCreateOptionsMenu");
+
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.options_menu, menu);
 
@@ -127,6 +141,8 @@ public class SearchableDictionary extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d(TAG, "Loading onOptionsItemSelected");
+
         switch (item.getItemId()) {
             case R.id.search:
                 onSearchRequested();

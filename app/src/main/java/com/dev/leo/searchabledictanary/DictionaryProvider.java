@@ -8,6 +8,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
+import android.util.Log;
 
 /**
  * Provides access to the dictionary database.
@@ -37,6 +38,7 @@ public class DictionaryProvider extends ContentProvider {
      * Builds up a UriMatcher for search suggestion and shortcut refresh queries.
      */
     private static UriMatcher buildUriMatcher() {
+
         UriMatcher matcher =  new UriMatcher(UriMatcher.NO_MATCH);
         // to get definitions...
         matcher.addURI(AUTHORITY, "dictionary", SEARCH_WORDS);
@@ -58,6 +60,8 @@ public class DictionaryProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
+        Log.d(TAG, "Loading onCreate");
+
         mDictionary = new DictionaryDatabase(getContext());
         return true;
     }
@@ -72,24 +76,33 @@ public class DictionaryProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
                         String sortOrder) {
+        Log.d(TAG, "Loading Cursor query");
 
         // Use the UriMatcher to see what kind of query we have and format the db query accordingly
         switch (sURIMatcher.match(uri)) {
             case SEARCH_SUGGEST:
+                Log.d(TAG, "Loading Cursor query SEARCH_SUGGEST");
+
                 if (selectionArgs == null) {
                     throw new IllegalArgumentException(
                             "selectionArgs must be provided for the Uri: " + uri);
                 }
                 return getSuggestions(selectionArgs[0]);
             case SEARCH_WORDS:
+                Log.d(TAG, "Loading Cursor query SEARCH_WORDS");
+
                 if (selectionArgs == null) {
                     throw new IllegalArgumentException(
                             "selectionArgs must be provided for the Uri: " + uri);
                 }
                 return search(selectionArgs[0]);
             case GET_WORD:
+                Log.d(TAG, "Loading Cursor query GET_WORDS");
+
                 return getWord(uri);
             case REFRESH_SHORTCUT:
+                Log.d(TAG, "Loading Cursor query SHORTCUT");
+
                 return refreshShortcut(uri);
             default:
                 throw new IllegalArgumentException("Unknown Uri: " + uri);
@@ -97,6 +110,8 @@ public class DictionaryProvider extends ContentProvider {
     }
 
     private Cursor getSuggestions(String query) {
+        Log.d(TAG, "Loading getSuggestions");
+
         query = query.toLowerCase();
         String[] columns = new String[] {
                 BaseColumns._ID,
@@ -110,6 +125,8 @@ public class DictionaryProvider extends ContentProvider {
     }
 
     private Cursor search(String query) {
+        Log.d(TAG, "Loading Cursor search");
+
         query = query.toLowerCase();
         String[] columns = new String[] {
                 BaseColumns._ID,
@@ -120,6 +137,8 @@ public class DictionaryProvider extends ContentProvider {
     }
 
     private Cursor getWord(Uri uri) {
+        Log.d(TAG, "Loading Cursor getWord");
+
         String rowId = uri.getLastPathSegment();
         String[] columns = new String[] {
                 DictionaryDatabase.KEY_WORD,
@@ -129,6 +148,8 @@ public class DictionaryProvider extends ContentProvider {
     }
 
     private Cursor refreshShortcut(Uri uri) {
+        Log.d(TAG, "Loading refreshShortcut");
+
       /* This won't be called with the current implementation, but if we include
        * {@link SearchManager#SUGGEST_COLUMN_SHORTCUT_ID} as a column in our suggestions table, we
        * could expect to receive refresh queries when a shortcutted suggestion is displayed in
@@ -153,14 +174,24 @@ public class DictionaryProvider extends ContentProvider {
      */
     @Override
     public String getType(Uri uri) {
+        Log.d(TAG, "Loading getType");
+
         switch (sURIMatcher.match(uri)) {
             case SEARCH_WORDS:
+                Log.d(TAG, "Loading getType SEARCH_WORDS");
+
                 return WORDS_MIME_TYPE;
             case GET_WORD:
+                Log.d(TAG, "Loading getType GET_WORDS" );
+
                 return DEFINITION_MIME_TYPE;
             case SEARCH_SUGGEST:
+                Log.d(TAG, "Loading getType SEARCH_SUGGEST");
+
                 return SearchManager.SUGGEST_MIME_TYPE;
             case REFRESH_SHORTCUT:
+                Log.d(TAG, "Loading getType REFRESH_SHORTCUT");
+
                 return SearchManager.SHORTCUT_MIME_TYPE;
             default:
                 throw new IllegalArgumentException("Unknown URL " + uri);

@@ -20,7 +20,9 @@ import java.util.HashMap;
 
 
 public class DictionaryDatabase {
-    private static final String TAG = "DictionaryDatabase";
+  private static final String TAG = "Dictionaryyy";
+
+
 
 
     public static final String KEY_WORD = SearchManager.SUGGEST_COLUMN_TEXT_1;
@@ -35,11 +37,14 @@ public class DictionaryDatabase {
 
 
     public DictionaryDatabase(Context context) {
+        Log.d(TAG,"DictionaryDatabase DictionaryDatabase");
+
         mDatabaseOpenHelper = new DictionaryOpenHelper(context);
     }
 
 
     private static HashMap<String,String> buildColumnMap() {
+        Log.d(TAG,"DictionaryDatabase load buildColumnMap");
         HashMap<String,String> map = new HashMap<String,String>();
         map.put(KEY_WORD, KEY_WORD);
         map.put(KEY_DEFINITION, KEY_DEFINITION);
@@ -54,6 +59,7 @@ public class DictionaryDatabase {
 
 
     public Cursor getWord(String rowId, String[] columns) {
+        Log.d(TAG,"DictionaryDatabase DictionaryData");
         String selection = "rowid = ?";
         String[] selectionArgs = new String[] {rowId};
 
@@ -63,6 +69,8 @@ public class DictionaryDatabase {
     }
 
     public Cursor getWordMatches(String query, String[] columns) {
+        Log.d(TAG,"DictionaryDatabase getWordMathces");
+
         String selection = KEY_WORD + " MATCH ?";
         String[] selectionArgs = new String[] {query+"*"};
 
@@ -73,7 +81,8 @@ public class DictionaryDatabase {
 
 
     private Cursor query(String selection, String[] selectionArgs, String[] columns) {
- 
+        Log.d(TAG,"DictionaryDatabase queru");
+
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         builder.setTables(FTS_VIRTUAL_TABLE);
         builder.setProjectionMap(mColumnMap);
@@ -82,8 +91,12 @@ public class DictionaryDatabase {
                 columns, selection, selectionArgs, null, null, null);
 
         if (cursor == null) {
+            Log.d(TAG,"DictionaryDatabase queru IF");
+
             return null;
         } else if (!cursor.moveToFirst()) {
+            Log.d(TAG,"DictionaryDatabase queru ELSE");
+
             cursor.close();
             return null;
         }
@@ -104,12 +117,17 @@ public class DictionaryDatabase {
                         KEY_DEFINITION + ");";
 
         DictionaryOpenHelper(Context context) {
+
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
+            Log.d(TAG,"DictionaryOpenHelper DictionaryOpenHelper");
+
             mHelperContext = context;
         }
 
         @Override
         public void onCreate(SQLiteDatabase db) {
+            Log.d(TAG,"DictionaryOpenHelper onCreate");
+
             mDatabase = db;
             mDatabase.execSQL(FTS_TABLE_CREATE);
             loadDictionary();
@@ -117,6 +135,8 @@ public class DictionaryDatabase {
 
   
         private void loadDictionary() {
+            Log.d(TAG,"DictionaryOpenHelper loadDictionary");
+
             new Thread(new Runnable() {
                 public void run() {
                     try {
@@ -129,7 +149,7 @@ public class DictionaryDatabase {
         }
 
         private void loadWords() throws IOException {
-            Log.d(TAG, "Loading words...");
+            Log.d(TAG, "DictionaryDatabase Loading words...");
             final Resources resources = mHelperContext.getResources();
             InputStream inputStream = resources.openRawResource(R.raw.definitions);
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -141,17 +161,19 @@ public class DictionaryDatabase {
                     if (strings.length < 2) continue;
                     long id = addWord(strings[0].trim(), strings[1].trim());
                     if (id < 0) {
-                        Log.e(TAG, "unable to add word: " + strings[0].trim());
+                        Log.e(TAG, " DictionaryDatabaseunable to add word: " + strings[0].trim());
                     }
                 }
             } finally {
                 reader.close();
             }
-            Log.d(TAG, "DONE loading words.");
+            Log.d(TAG, "DictionaryDatabase DONE loading words.");
         }
 
  
         public long addWord(String word, String definition) {
+            Log.d(TAG,"DictionaryOpenHelper addWord");
+
             ContentValues initialValues = new ContentValues();
             initialValues.put(KEY_WORD, word);
             initialValues.put(KEY_DEFINITION, definition);
@@ -161,7 +183,7 @@ public class DictionaryDatabase {
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
+            Log.w(TAG, " DictionaryDatabase Upgrading database from version " + oldVersion + " to "
                     + newVersion + ", which will destroy all old data");
             db.execSQL("DROP TABLE IF EXISTS " + FTS_VIRTUAL_TABLE);
             onCreate(db);

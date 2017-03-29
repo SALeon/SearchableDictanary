@@ -12,7 +12,7 @@ import android.util.Log;
 
 
 public class DictionaryProvider extends ContentProvider {
-    String TAG = "DictionaryProvider";
+    private static final String TAG = "Dictionaryyy";
 
     public static String AUTHORITY = "com.example.android.searchabledict.DictionaryProvider";
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/dictionary");
@@ -32,6 +32,8 @@ public class DictionaryProvider extends ContentProvider {
 
 
     private static UriMatcher buildUriMatcher() {
+        Log.d(TAG, "DictionaryProvider buildUriMatcher");
+
         UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
 
         matcher.addURI(AUTHORITY, "dictionary", SEARCH_WORDS);
@@ -48,7 +50,7 @@ public class DictionaryProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        Log.d(TAG, "load onCreate");
+        Log.d(TAG, "DictionaryProvider load onCreate");
         mDictionary = new DictionaryDatabase(getContext());
         return true;
     }
@@ -57,27 +59,28 @@ public class DictionaryProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
                         String sortOrder) {
+        Log.d(TAG, "DictionaryProvider query ");
 
         switch (sURIMatcher.match(uri)) {
             case SEARCH_SUGGEST:
-                Log.d(TAG, "load query SEARCH_SUGGEST");
+                Log.d(TAG, "DictionaryProvider load query SEARCH_SUGGEST");
                 if (selectionArgs == null) {
                     throw new IllegalArgumentException(
                             "selectionArgs must be provided for the Uri: " + uri);
                 }
                 return getSuggestions(selectionArgs[0]);
             case SEARCH_WORDS:
-                Log.d(TAG, "load qury SEARCH_WORDS");
+                Log.d(TAG, "DictionaryProvider load qury SEARCH_WORDS");
                 if (selectionArgs == null) {
                     throw new IllegalArgumentException(
                             "selectionArgs must be provided for the Uri: " + uri);
                 }
                 return search(selectionArgs[0]);
             case GET_WORD:
-                Log.d(TAG, "query GET_WORD");
+                Log.d(TAG, "DictionaryProvider query GET_WORD");
                 return getWord(uri);
             case REFRESH_SHORTCUT:
-                Log.d(TAG, "query REFRESH_SHORTCUT");
+                Log.d(TAG, "DictionaryProvider query REFRESH_SHORTCUT");
                 return refreshShortcut(uri);
             default:
                 throw new IllegalArgumentException("Unknown Uri: " + uri);
@@ -85,8 +88,8 @@ public class DictionaryProvider extends ContentProvider {
     }
 
     private Cursor getSuggestions(String query) {
-        Log.d(TAG, "load getSuggestions");
-        query = query.toLowerCase();
+        Log.d(TAG, "DictionaryProvider load getSuggestions");
+//        query = query.toLowerCase();
         String[] columns = new String[]{
                 BaseColumns._ID,
                 DictionaryDatabase.KEY_WORD,
@@ -98,7 +101,7 @@ public class DictionaryProvider extends ContentProvider {
     }
 
     private Cursor search(String query) {
-        Log.d(TAG, "load search");
+        Log.d(TAG, "DictionaryProvider load search");
         query = query.toLowerCase();
         String[] columns = new String[]{
                 BaseColumns._ID,
@@ -119,7 +122,7 @@ public class DictionaryProvider extends ContentProvider {
     }
 
     private Cursor refreshShortcut(Uri uri) {
-Log.d(TAG,"load refreshShortcut");
+Log.d(TAG,"DictionaryProvider load refreshShortcut");
         String rowId = uri.getLastPathSegment();
         String[] columns = new String[]{
                 BaseColumns._ID,
@@ -137,16 +140,16 @@ Log.d(TAG,"load refreshShortcut");
 
         switch (sURIMatcher.match(uri)) {
             case SEARCH_WORDS:
-                Log.d(TAG,"getType SEARCH_WORDS");
+                Log.d(TAG,"DictionaryProvider getType SEARCH_WORDS");
                 return WORDS_MIME_TYPE;
             case GET_WORD:
-                Log.d(TAG,"load getType GET_WORD");
+                Log.d(TAG,"DictionaryProvider load getType GET_WORD");
                 return DEFINITION_MIME_TYPE;
             case SEARCH_SUGGEST:
-                Log.d(TAG,"load getType SEARCH_SUGGEST");
+                Log.d(TAG,"DictionaryProvider load getType SEARCH_SUGGEST");
                 return SearchManager.SUGGEST_MIME_TYPE;
             case REFRESH_SHORTCUT:
-                Log.d(TAG,"load getType REFRESH_SHORCUT");
+                Log.d(TAG,"DictionaryProvider load getType REFRESH_SHORCUT");
                 return SearchManager.SHORTCUT_MIME_TYPE;
             default:
                 throw new IllegalArgumentException("Unknown URL " + uri);
